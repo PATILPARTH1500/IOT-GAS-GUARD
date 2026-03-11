@@ -1,0 +1,5 @@
+{
+  "name": "IoT Gas Guard",
+  "description": "Real-time IoT Gas Detection Dashboard with Gemini AI analysis",
+  "requestFramePermissions": []
+}

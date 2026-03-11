@@ -1,0 +1,11 @@
+{
+  "rules": {
+    "gas_detector": {
+      ".read": "auth != null",
+      ".write": "auth != null", // Only authenticated devices (ESP32) can write
+      "$pushId": {
+        ".validate": "newData.hasChildren(['methane', 'air_quality', 'temperature', 'humidity'])"
+      }
+    }
+  }
+}

@@ -1,0 +1,126 @@
+@import "tailwindcss";
+
+@theme {
+  --color-neon-green: #00ff9d;
+  --color-neon-red: #ff0055;
+  --color-neon-yellow: #ffcc00;
+  --color-neon-blue: #00ccff;
+}
+
+:root {
+  --bg-primary: #020617;
+  --text-primary: #ffffff;
+  --text-secondary: #9ca3af;
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --card-inner-bg: rgba(0, 0, 0, 0.2);
+  --chart-grid: rgba(255, 255, 255, 0.05);
+}
+
+.light {
+  --bg-primary: #f0f9ff;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-border: rgba(0, 0, 0, 0.1);
+  --card-inner-bg: rgba(255, 255, 255, 0.5);
+  --chart-grid: rgba(0, 0, 0, 0.05);
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Background Gradients */
+body::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(0, 255, 157, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 0% 100%, rgba(0, 204, 255, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.light body::before {
+  opacity: 0.5;
+}
+
+.glass-panel {
+  background-color: var(--glass-bg);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--glass-border);
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+}
+
+.text-secondary {
+  color: var(--text-secondary);
+}
+
+.bg-card-inner {
+  background-color: var(--card-inner-bg);
+}
+
+.neon-text-green {
+  text-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
+}
+
+.neon-text-red {
+  text-shadow: 0 0 10px rgba(255, 0, 85, 0.5);
+}
+
+.neon-border-red {
+  box-shadow: 0 0 20px rgba(255, 0, 85, 0.3);
+  border-color: rgba(255, 0, 85, 0.5);
+}
+
+.animate-pulse-fast {
+  animation: pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+.scanline::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, transparent, rgba(0, 255, 157, 0.1), transparent);
+  animation: scanline 4s linear infinite;
+  pointer-events: none;
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--glass-bg);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--text-secondary);
+  opacity: 0.2;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--text-primary);
+  opacity: 0.5;
+}

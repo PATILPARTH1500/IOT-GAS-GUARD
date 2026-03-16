@@ -146,7 +146,7 @@ export default function App() {
     setIncidents(prev => {
       // Prevent duplicate recent messages
       if (prev.length > 0 && prev[prev.length - 1].message === message && 
-          Date.now() - new Date(prev[prev.length - 1].timestamp).getTime() < 60000) {
+          Date.now() - parseInt(prev[prev.length - 1].id) < 60000) {
         return prev;
       }
       return [...prev, {
@@ -239,13 +239,16 @@ export default function App() {
   useEffect(() => {
     const interval = setInterval(() => {
       const now = Date.now();
-      if (now - deviceStatus.lastUpdate > 30000) {
-        setDeviceStatus(prev => ({ ...prev, online: false }));
-        addIncident('offline', 'Device connection lost');
+      // ESP32 might send data every 30-60 seconds, so we wait 90 seconds before marking offline
+      if (now - deviceStatus.lastUpdate > 90000) {
+        if (deviceStatus.online) {
+          setDeviceStatus(prev => ({ ...prev, online: false }));
+          addIncident('offline', 'Device connection lost');
+        }
       }
     }, 5000);
     return () => clearInterval(interval);
-  }, [deviceStatus.lastUpdate]);
+  }, [deviceStatus.lastUpdate, deviceStatus.online]);
 
   const updateData = (newData: SensorData) => {
     setData(newData);

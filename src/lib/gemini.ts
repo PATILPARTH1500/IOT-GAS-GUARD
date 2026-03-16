@@ -2,7 +2,8 @@ import { GoogleGenAI, Type } from "@google/genai";
 import { SensorData, AIAnalysis, RiskForecast } from "../types";
 
 // Initialize Gemini API
-const apiKey = process.env.GEMINI_API_KEY || "AIzaSyDESYkOot38jjuoMuvZHbua7peujEEJ0PU";
+// Use import.meta.env for Vite, fallback to the provided key
+const apiKey = (import.meta as any).env?.VITE_GEMINI_API_KEY || "AIzaSyDESYkOot38jjuoMuvZHbua7peujEEJ0PU";
 const ai = new GoogleGenAI({ apiKey });
 
 export async function analyzeRisk(sensorData: SensorData): Promise<AIAnalysis> {

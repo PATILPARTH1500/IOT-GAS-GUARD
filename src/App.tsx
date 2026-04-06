@@ -262,44 +262,30 @@ export default function App() {
     }
   };
 
-  // AI Analysis & Forecast Trigger
-  useEffect(() => {
-    // Only trigger if we have real data (methane > 0 or similar check)
+  const handleGetAIAnalysis = async () => {
     if (data.methane === 0 && data.air_quality === 0) return;
 
-    const analyzeData = async () => {
-      setLoading(true);
-      try {
-        const result = await analyzeRisk(data);
-        setAnalysis(result);
-      } catch (error) {
-        console.error("Analysis failed:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    setLoading(true);
+    setForecastLoading(true);
 
-    const runForecast = async () => {
-      if (history.methane.length < 10) return;
-      setForecastLoading(true);
-      try {
-        const result = await forecastRisk(history.methane.slice(-20));
-        setForecast(result);
-      } catch (error) {
-        console.error("Forecast failed:", error);
-      } finally {
-        setForecastLoading(false);
-      }
-    };
+    try {
+      // Run both analysis and forecast in parallel
+      const [analysisResult, forecastResult] = await Promise.all([
+        analyzeRisk(data),
+        history.methane.length >= 10 ? forecastRisk(history.methane.slice(-20)) : Promise.resolve(null)
+      ]);
 
-    // Debounce analysis
-    const timeout = setTimeout(() => {
-      analyzeData();
-      runForecast();
-    }, 2000);
-    
-    return () => clearTimeout(timeout);
-  }, [data.methane, data.air_quality]);
+      setAnalysis(analysisResult);
+      if (forecastResult) {
+        setForecast(forecastResult);
+      }
+    } catch (error) {
+      console.error("AI Analysis failed:", error);
+    } finally {
+      setLoading(false);
+      setForecastLoading(false);
+    }
+  };
 
   // Sensor Health Monitor
   useEffect(() => {
@@ -507,6 +493,7 @@ export default function App() {
               analysis={analysis.analysis} 
               recommendation={analysis.recommendation} 
               loading={loading}
+              onAnalyze={handleGetAIAnalysis}
             />
             <RiskForecastCard forecast={forecast} loading={forecastLoading} />
           </div>

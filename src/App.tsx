@@ -14,9 +14,9 @@ import { AIChat } from './components/AIChat';
 import { ExportControls } from './components/ExportControls';
 import { TrendAnalytics } from './components/TrendAnalytics';
 import { SensorData, AIAnalysis, RiskForecast, Incident, DeviceStatus } from './types';
-import { Activity, Wind, Thermometer, Droplets, Zap, Wifi, WifiOff, Volume2, VolumeX, Sun, Moon, Sprout } from 'lucide-react';
+import { Activity, Wind, Thermometer, Droplets, Zap, Wifi, WifiOff, Volume2, VolumeX, Sun, Moon, Sprout, Power } from 'lucide-react';
 import { clsx } from 'clsx';
-import { ref, onValue, off } from 'firebase/database';
+import { ref, onValue, off, set } from 'firebase/database';
 import { db } from './lib/firebase';
 import { analyzeRisk, forecastRisk } from './lib/gemini';
 
@@ -61,6 +61,7 @@ export default function App() {
   const [connected, setConnected] = useState(true);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [sensorsActive, setSensorsActive] = useState(true);
   
   const audioContextRef = useRef<AudioContext | null>(null);
   const oscillatorRef = useRef<OscillatorNode | null>(null);
@@ -86,6 +87,7 @@ export default function App() {
 
     // Listen to the ESP32 path
     const sensorRef = ref(db, 'sensors/latest');
+    const controlRef = ref(db, 'sensors/control/active');
     
     setConnected(true);
     
@@ -121,8 +123,29 @@ export default function App() {
       setDeviceStatus(prev => ({ ...prev, online: false }));
     });
 
-    return () => off(sensorRef);
+    const unsubscribeControl = onValue(controlRef, (snapshot) => {
+      const val = snapshot.val();
+      if (val !== null) {
+        setSensorsActive(val);
+      }
+    });
+
+    return () => {
+      off(sensorRef);
+      off(controlRef);
+    };
   }, []);
+
+  const toggleSensors = () => {
+    if (!db) return;
+    const newState = !sensorsActive;
+    setSensorsActive(newState);
+    set(ref(db, 'sensors/control/active'), newState).catch(err => {
+      console.error("Failed to update sensor state:", err);
+      // Revert state if failed
+      setSensorsActive(!newState);
+    });
+  };
 
   // Alarm Logic & Voice Alert
   useEffect(() => {
@@ -271,10 +294,10 @@ export default function App() {
           <p className="text-gray-300 text-lg">
             Your Firebase Realtime Database is currently locked. The web application cannot read the sensor data from your ESP32.
           </p>
-          <div className="bg-black/50 p-6 rounded-xl border border-white/10 space-y-4">
-            <h2 className="text-xl font-semibold text-white">How to fix this in 30 seconds:</h2>
-            <ol className="list-decimal list-inside space-y-3 text-gray-300">
-              <li>Go to the <a href="https://console.firebase.google.com/" target="_blank" rel="noreferrer" className="text-neon-blue hover:underline">Firebase Console</a></li>
+          <div className="bg-black/50 dark:bg-black/50 p-6 rounded-xl border border-black/10 dark:border-white/10 space-y-4">
+            <h2 className="text-xl font-semibold text-[var(--text-primary)]">How to fix this in 30 seconds:</h2>
+            <ol className="list-decimal list-inside space-y-3 text-[var(--text-secondary)]">
+              <li>Go to the <a href="https://console.firebase.google.com/" target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">Firebase Console</a></li>
               <li>Open your project (<strong>gas-sensor-webapp</strong>)</li>
               <li>Click on <strong>Realtime Database</strong> in the left menu</li>
               <li>Click on the <strong>Rules</strong> tab at the top</li>
@@ -288,11 +311,11 @@ export default function App() {
   }
 }`}
             </pre>
-            <ol className="list-decimal list-inside space-y-3 text-gray-300" start={6}>
+            <ol className="list-decimal list-inside space-y-3 text-[var(--text-secondary)]" start={6}>
               <li>Click the blue <strong>Publish</strong> button</li>
             </ol>
           </div>
-          <p className="text-sm text-gray-400 text-center">
+          <p className="text-sm text-[var(--text-secondary)] text-center">
             Once you publish the new rules, this page will automatically disappear and show your dashboard.
           </p>
         </div>
@@ -304,16 +327,17 @@ export default function App() {
     <div className="min-h-screen p-4 md:p-6 relative overflow-hidden transition-colors duration-300 pb-24">
       {/* Background Glows */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-neon-green/10 rounded-full blur-[100px]" />
-        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-neon-blue/10 rounded-full blur-[100px]" />
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-500/10 rounded-full blur-[120px]" />
+        <div className="absolute top-[40%] left-[40%] w-[20%] h-[20%] bg-red-500/5 rounded-full blur-[100px]" />
       </div>
 
       <div className="relative z-10 max-w-[1600px] mx-auto space-y-6">
         {/* Header */}
         <header className="flex flex-col xl:flex-row justify-between items-center glass-panel p-4 md:p-6 gap-4">
           <div className="flex items-center gap-4 w-full xl:w-auto">
-            <div className="p-3 bg-neon-green/20 rounded-full border border-neon-green/50 shadow-[0_0_15px_rgba(0,255,157,0.3)]">
-              <Activity className="w-8 h-8 text-neon-green" />
+            <div className="p-3 bg-blue-500/10 rounded-xl border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]">
+              <Activity className="w-8 h-8 text-blue-500" />
             </div>
             <div>
               <h1 className="text-2xl font-bold tracking-tight">IoT Gas Guard</h1>
@@ -323,21 +347,34 @@ export default function App() {
 
           <div className="flex flex-wrap items-center gap-4 w-full xl:w-auto justify-end">
             <button 
+              onClick={toggleSensors}
+              className={clsx(
+                "flex items-center gap-2 px-4 py-2 rounded-full border transition-all duration-300 shadow-sm",
+                sensorsActive 
+                  ? "bg-emerald-500/10 border-emerald-500/50 text-emerald-500 hover:bg-emerald-500/20" 
+                  : "bg-red-500/10 border-red-500/50 text-red-500 hover:bg-red-500/20"
+              )}
+            >
+              <Power className="w-4 h-4" />
+              <span className="text-xs font-bold tracking-wider">{sensorsActive ? "SENSORS ON" : "SENSORS OFF"}</span>
+            </button>
+
+            <button 
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="p-2 rounded-full hover:bg-white/10 transition-colors"
+              className="p-2 rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
             >
               {theme === 'dark' ? <Sun className="w-5 h-5 text-yellow-400" /> : <Moon className="w-5 h-5 text-slate-700" />}
             </button>
 
             <button 
               onClick={() => setSoundEnabled(!soundEnabled)}
-              className="p-2 rounded-full hover:bg-white/10 transition-colors"
+              className="p-2 rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
             >
-              {soundEnabled ? <Volume2 className="w-5 h-5 text-neon-blue" /> : <VolumeX className="w-5 h-5 text-secondary" />}
+              {soundEnabled ? <Volume2 className="w-5 h-5 text-blue-500" /> : <VolumeX className="w-5 h-5 text-secondary" />}
             </button>
             
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card-inner border border-white/10">
-              {connected ? <Wifi className="w-4 h-4 text-neon-green" /> : <WifiOff className="w-4 h-4 text-red-500" />}
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card-inner border border-black/10 dark:border-white/10">
+              {connected ? <Wifi className="w-4 h-4 text-emerald-500" /> : <WifiOff className="w-4 h-4 text-red-500" />}
               <span className="text-xs font-mono text-secondary">{connected ? "CONNECTED" : "OFFLINE"}</span>
             </div>
           </div>

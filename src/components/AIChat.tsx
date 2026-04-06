@@ -48,7 +48,7 @@ export function AIChat({ sensorData }: AIChatProps) {
     <>
       {/* Floating Button */}
       <motion.button
-        className="fixed bottom-6 right-6 p-4 bg-neon-blue text-black rounded-full shadow-[0_0_20px_rgba(0,204,255,0.4)] z-50 hover:scale-110 transition-transform"
+        className="fixed bottom-6 right-6 p-4 bg-blue-500 text-white rounded-full shadow-[0_0_20px_rgba(59,130,246,0.4)] z-50 hover:scale-110 transition-transform"
         onClick={() => setIsOpen(!isOpen)}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
@@ -63,11 +63,11 @@ export function AIChat({ sensorData }: AIChatProps) {
             initial={{ opacity: 0, y: 20, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.9 }}
-            className="fixed bottom-24 right-6 w-80 md:w-96 h-[500px] glass-panel flex flex-col z-50 border border-neon-blue/30 shadow-2xl"
+            className="fixed bottom-24 right-6 w-80 md:w-96 h-[500px] glass-panel flex flex-col z-50 border border-blue-500/30 shadow-2xl"
           >
-            <div className="p-4 border-b border-white/10 bg-neon-blue/10 flex items-center gap-2">
-              <Bot className="w-5 h-5 text-neon-blue" />
-              <h3 className="font-bold text-white">Gas Guard Assistant</h3>
+            <div className="p-4 border-b border-[var(--glass-border)] bg-blue-500/10 flex items-center gap-2">
+              <Bot className="w-5 h-5 text-blue-500" />
+              <h3 className="font-bold text-[var(--text-primary)]">Gas Guard Assistant</h3>
             </div>
 
             <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar" ref={scrollRef}>
@@ -75,8 +75,8 @@ export function AIChat({ sensorData }: AIChatProps) {
                 <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                   <div className={`max-w-[80%] p-3 rounded-xl text-sm ${
                     msg.role === 'user' 
-                      ? 'bg-neon-blue text-black rounded-tr-none' 
-                      : 'bg-white/10 text-white rounded-tl-none'
+                      ? 'bg-blue-500 text-white rounded-tr-none' 
+                      : 'bg-[var(--glass-bg)] text-[var(--text-primary)] rounded-tl-none'
                   }`}>
                     <p>{msg.content}</p>
                     <span className="text-[10px] opacity-50 block mt-1 text-right">{msg.timestamp}</span>
@@ -85,28 +85,28 @@ export function AIChat({ sensorData }: AIChatProps) {
               ))}
               {loading && (
                 <div className="flex justify-start">
-                  <div className="bg-white/5 p-3 rounded-xl rounded-tl-none flex gap-1">
-                    <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" />
-                    <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce delay-75" />
-                    <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce delay-150" />
+                  <div className="bg-[var(--glass-bg)] p-3 rounded-xl rounded-tl-none flex gap-1">
+                    <span className="w-1.5 h-1.5 bg-[var(--text-secondary)] rounded-full animate-bounce" />
+                    <span className="w-1.5 h-1.5 bg-[var(--text-secondary)] rounded-full animate-bounce delay-75" />
+                    <span className="w-1.5 h-1.5 bg-[var(--text-secondary)] rounded-full animate-bounce delay-150" />
                   </div>
                 </div>
               )}
             </div>
 
-            <div className="p-4 border-t border-white/10 flex gap-2">
+            <div className="p-4 border-t border-[var(--glass-border)] flex gap-2">
               <input
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                 placeholder="Ask about safety..."
-                className="flex-1 bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-neon-blue/50"
+                className="flex-1 bg-[var(--card-inner-bg)] border border-[var(--glass-border)] rounded-lg px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus:border-blue-500/50"
               />
               <button 
                 onClick={handleSend}
                 disabled={loading}
-                className="p-2 bg-neon-blue/20 text-neon-blue rounded-lg hover:bg-neon-blue/30 transition-colors disabled:opacity-50"
+                className="p-2 bg-blue-500/20 text-blue-500 rounded-lg hover:bg-blue-500/30 transition-colors disabled:opacity-50"
               >
                 <Send className="w-4 h-4" />
               </button>

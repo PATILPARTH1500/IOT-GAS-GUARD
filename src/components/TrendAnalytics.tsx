@@ -32,7 +32,7 @@ export function TrendAnalytics({ history, theme }: TrendAnalyticsProps) {
     datasets: [{
       label: 'Air Quality Trend',
       data: history.air_quality,
-      backgroundColor: theme === 'dark' ? 'rgba(255, 204, 0, 0.5)' : 'rgba(255, 204, 0, 0.8)',
+      backgroundColor: theme === 'dark' ? 'rgba(59, 130, 246, 0.5)' : 'rgba(59, 130, 246, 0.8)',
       borderRadius: 4
     }]
   };
@@ -45,7 +45,7 @@ export function TrendAnalytics({ history, theme }: TrendAnalyticsProps) {
           <h4 className="text-[10px] text-secondary mb-2 font-mono">AIR QUALITY (WEEKLY AVG)</h4>
           <Bar data={barData} options={options} />
         </div>
-        <div className="h-48 flex items-center justify-center border border-white/5 rounded bg-card-inner">
+        <div className="h-48 flex items-center justify-center border border-[var(--glass-border)] rounded bg-card-inner">
           <p className="text-xs text-secondary">More analytics data gathering...</p>
         </div>
       </div>

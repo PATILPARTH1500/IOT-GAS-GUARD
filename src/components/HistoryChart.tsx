@@ -104,8 +104,8 @@ export function HistoryChart({ data, labels, color, label, theme }: HistoryChart
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-secondary text-sm uppercase tracking-wider font-mono">{label} History</h3>
         <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-          <span className="text-xs text-green-500 font-mono">LIVE</span>
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span className="text-xs text-emerald-500 font-mono">LIVE</span>
         </div>
       </div>
       <div className="h-48 w-full">

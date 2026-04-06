@@ -13,31 +13,31 @@ interface AIInsightProps {
 export function AIInsight({ riskLevel, analysis, recommendation, loading }: AIInsightProps) {
   const styles = {
     Low: {
-      border: "border-neon-green/50",
-      text: "text-neon-green",
-      bg: "bg-neon-green/10",
-      glow: "shadow-[0_0_30px_-10px_rgba(0,255,157,0.3)]",
+      border: "border-emerald-500/50",
+      text: "text-emerald-500",
+      bg: "bg-emerald-500/10",
+      glow: "shadow-[0_0_30px_-10px_rgba(16,185,129,0.3)]",
       icon: CheckCircle
     },
     Moderate: {
-      border: "border-neon-yellow/50",
-      text: "text-neon-yellow",
-      bg: "bg-neon-yellow/10",
-      glow: "shadow-[0_0_30px_-10px_rgba(255,204,0,0.3)]",
+      border: "border-amber-500/50",
+      text: "text-amber-500",
+      bg: "bg-amber-500/10",
+      glow: "shadow-[0_0_30px_-10px_rgba(245,158,11,0.3)]",
       icon: Info
     },
     High: {
-      border: "border-neon-red/50",
-      text: "text-neon-red",
-      bg: "bg-neon-red/10",
-      glow: "shadow-[0_0_30px_-10px_rgba(255,0,85,0.3)]",
+      border: "border-red-500/50",
+      text: "text-red-500",
+      bg: "bg-red-500/10",
+      glow: "shadow-[0_0_30px_-10px_rgba(239,68,68,0.3)]",
       icon: AlertTriangle
     },
     Critical: {
-      border: "border-neon-red animate-pulse",
-      text: "text-red-500",
-      bg: "bg-red-500/20",
-      glow: "shadow-[0_0_40px_-5px_rgba(255,0,0,0.5)]",
+      border: "border-red-600 animate-pulse",
+      text: "text-red-600",
+      bg: "bg-red-600/20",
+      glow: "shadow-[0_0_40px_-5px_rgba(220,38,38,0.5)]",
       icon: ShieldAlert
     }
   };
@@ -72,7 +72,7 @@ export function AIInsight({ riskLevel, analysis, recommendation, loading }: AIIn
             exit={{ opacity: 0 }}
             className="absolute top-4 right-4"
           >
-            <Loader2 className="w-4 h-4 text-neon-blue animate-spin" />
+            <Loader2 className="w-4 h-4 text-blue-500 animate-spin" />
           </motion.div>
         )}
       </AnimatePresence>
@@ -93,7 +93,7 @@ export function AIInsight({ riskLevel, analysis, recommendation, loading }: AIIn
         <div>
           <h3 className="text-secondary text-xs uppercase tracking-widest font-mono mb-1 flex items-center gap-2">
             AI Risk Assessment
-            {riskLevel === 'Low' && <Sparkles className="w-3 h-3 text-neon-green opacity-50" />}
+            {riskLevel === 'Low' && <Sparkles className="w-3 h-3 text-emerald-500 opacity-50" />}
           </h3>
           <motion.span 
             key={riskLevel} // Animate when risk level changes
@@ -109,16 +109,16 @@ export function AIInsight({ riskLevel, analysis, recommendation, loading }: AIIn
       {/* Content Section */}
       <div className="space-y-4 relative z-10">
         <motion.div 
-          className="bg-card-inner p-4 rounded-xl border border-white/5 hover:border-white/10 transition-colors"
+          className="bg-card-inner p-4 rounded-xl border border-[var(--glass-border)] hover:border-black/20 dark:hover:border-white/10 transition-colors"
           whileHover={{ x: 4 }}
           transition={{ type: "spring", stiffness: 300 }}
         >
           <h4 className="text-secondary text-xs uppercase mb-2 font-mono opacity-70">Analysis</h4>
-          <p className="text-sm leading-relaxed font-medium">{analysis}</p>
+          <p className="text-sm leading-relaxed font-medium text-[var(--text-primary)]">{analysis}</p>
         </motion.div>
 
         <motion.div 
-          className="bg-card-inner p-4 rounded-xl border border-white/5 hover:border-white/10 transition-colors"
+          className="bg-card-inner p-4 rounded-xl border border-[var(--glass-border)] hover:border-black/20 dark:hover:border-white/10 transition-colors"
           whileHover={{ x: 4 }}
           transition={{ type: "spring", stiffness: 300, delay: 0.1 }}
         >
@@ -128,11 +128,11 @@ export function AIInsight({ riskLevel, analysis, recommendation, loading }: AIIn
       </div>
       
       {/* Footer */}
-      <div className="mt-6 flex justify-between items-center border-t border-white/5 pt-4">
+      <div className="mt-6 flex justify-between items-center border-t border-[var(--glass-border)] pt-4">
         <div className="flex gap-1">
-          <span className="w-1.5 h-1.5 rounded-full bg-neon-blue animate-pulse" />
-          <span className="w-1.5 h-1.5 rounded-full bg-neon-blue animate-pulse delay-75" />
-          <span className="w-1.5 h-1.5 rounded-full bg-neon-blue animate-pulse delay-150" />
+          <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+          <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse delay-75" />
+          <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse delay-150" />
         </div>
         <span className="text-[10px] text-secondary font-mono opacity-60 flex items-center gap-1">
           Powered by Gemini 2.5 Flash

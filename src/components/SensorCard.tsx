@@ -13,21 +13,21 @@ interface SensorCardProps {
 
 export function SensorCard({ label, value, unit, icon: Icon, status, trend }: SensorCardProps) {
   const statusColors = {
-    safe: "text-neon-green border-neon-green/30 shadow-[0_0_15px_rgba(0,255,157,0.1)]",
-    warning: "text-neon-yellow border-neon-yellow/30 shadow-[0_0_15px_rgba(255,204,0,0.1)]",
-    danger: "text-neon-red border-neon-red/30 shadow-[0_0_15px_rgba(255,0,85,0.2)] animate-pulse-fast"
+    safe: "text-emerald-500 border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.1)]",
+    warning: "text-amber-500 border-amber-500/30 shadow-[0_0_15px_rgba(245,158,11,0.1)]",
+    danger: "text-red-500 border-red-500/30 shadow-[0_0_15px_rgba(239,68,68,0.2)] animate-pulse-fast"
   };
 
   const iconColors = {
-    safe: "text-neon-green",
-    warning: "text-neon-yellow",
-    danger: "text-neon-red"
+    safe: "text-emerald-500",
+    warning: "text-amber-500",
+    danger: "text-red-500"
   };
 
   return (
     <div className={clsx(
       "glass-panel p-6 flex flex-col items-center justify-between transition-all duration-300 hover:scale-105",
-      status === 'danger' && "border-neon-red/50"
+      status === 'danger' && "border-red-500/50"
     )}>
       <div className="w-full flex justify-between items-start mb-4">
         <span className="text-secondary text-sm uppercase tracking-wider font-mono">{label}</span>
@@ -44,8 +44,8 @@ export function SensorCard({ label, value, unit, icon: Icon, status, trend }: Se
       <div className="w-full mt-4 h-1.5 bg-card-inner rounded-full overflow-hidden">
         <div 
           className={clsx("h-full transition-all duration-1000 ease-out", 
-            status === 'safe' ? 'bg-neon-green' : 
-            status === 'warning' ? 'bg-neon-yellow' : 'bg-neon-red'
+            status === 'safe' ? 'bg-emerald-500' : 
+            status === 'warning' ? 'bg-amber-500' : 'bg-red-500'
           )}
           style={{ width: `${Math.min(value, 100)}%` }} // Simplified percentage for demo
         />

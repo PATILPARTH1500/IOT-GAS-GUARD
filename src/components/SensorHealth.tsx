@@ -23,7 +23,7 @@ export function SensorHealth({ status }: SensorHealthProps) {
         </h3>
         <div className={clsx(
           "flex items-center gap-2 px-2 py-1 rounded text-xs font-bold",
-          status.online ? "bg-neon-green/10 text-neon-green" : "bg-red-500/10 text-red-500"
+          status.online ? "bg-emerald-500/10 text-emerald-500" : "bg-red-500/10 text-red-500"
         )}>
           {status.online ? <Wifi className="w-3 h-3" /> : <WifiOff className="w-3 h-3" />}
           {status.online ? "ONLINE" : "OFFLINE"}
@@ -32,10 +32,10 @@ export function SensorHealth({ status }: SensorHealthProps) {
 
       <div className="grid grid-cols-2 gap-3">
         {sensors.map((sensor) => (
-          <div key={sensor.id} className="bg-card-inner p-3 rounded border border-white/5 flex items-center justify-between">
-            <span className="text-xs text-gray-300 font-mono">{sensor.name}</span>
+          <div key={sensor.id} className="bg-card-inner p-3 rounded border border-[var(--glass-border)] flex items-center justify-between">
+            <span className="text-xs text-[var(--text-primary)] font-mono">{sensor.name}</span>
             {sensor.active ? (
-              <CheckCircle className="w-4 h-4 text-neon-green" />
+              <CheckCircle className="w-4 h-4 text-emerald-500" />
             ) : (
               <AlertTriangle className="w-4 h-4 text-red-500 animate-pulse" />
             )}
@@ -43,7 +43,7 @@ export function SensorHealth({ status }: SensorHealthProps) {
         ))}
       </div>
       
-      <div className="mt-4 pt-4 border-t border-white/5">
+      <div className="mt-4 pt-4 border-t border-[var(--glass-border)]">
         <div className="flex justify-between text-[10px] text-secondary font-mono">
           <span>Last Heartbeat:</span>
           <span>{new Date(status.lastUpdate).toLocaleTimeString()}</span>

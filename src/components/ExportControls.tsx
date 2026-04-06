@@ -107,13 +107,13 @@ export function ExportControls({ dataHistory, currentData, analysis, incidents }
 
   return (
     <div className="glass-panel p-4 flex gap-2 justify-end">
-      <button onClick={downloadCSV} className="flex items-center gap-2 px-3 py-2 bg-white/5 hover:bg-white/10 rounded text-xs text-secondary transition-colors">
+      <button onClick={downloadCSV} className="flex items-center gap-2 px-3 py-2 bg-[var(--glass-bg)] hover:bg-black/10 dark:hover:bg-white/10 rounded text-xs text-secondary transition-colors">
         <Download className="w-4 h-4" /> Export CSV
       </button>
-      <button onClick={downloadJSON} className="flex items-center gap-2 px-3 py-2 bg-white/5 hover:bg-white/10 rounded text-xs text-secondary transition-colors">
+      <button onClick={downloadJSON} className="flex items-center gap-2 px-3 py-2 bg-[var(--glass-bg)] hover:bg-black/10 dark:hover:bg-white/10 rounded text-xs text-secondary transition-colors">
         <Download className="w-4 h-4" /> Export JSON
       </button>
-      <button onClick={generateReport} className="flex items-center gap-2 px-3 py-2 bg-neon-blue/20 text-neon-blue hover:bg-neon-blue/30 rounded text-xs transition-colors">
+      <button onClick={generateReport} className="flex items-center gap-2 px-3 py-2 bg-blue-500/20 text-blue-500 hover:bg-blue-500/30 rounded text-xs transition-colors">
         <FileText className="w-4 h-4" /> Generate Report
       </button>
     </div>

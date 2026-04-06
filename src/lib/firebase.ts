@@ -2,15 +2,15 @@ import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID
+  apiKey: "AIzaSyA2QhR0Re9jgMYMF24kY4_86CzPdRz-hDw",
+  authDomain: "gas-sensor-webapp.firebaseapp.com",
+  databaseURL: "https://gas-sensor-webapp-default-rtdb.firebaseio.com",
+  projectId: "gas-sensor-webapp",
+  storageBucket: "gas-sensor-webapp.firebasestorage.app",
+  messagingSenderId: "391417878594",
+  appId: "1:391417878594:web:c85d58f0dff0e6452b35db",
+  measurementId: "G-R6YZTVNDNK"
 };
 
-// Only initialize if we have the config
-export const app = firebaseConfig.apiKey ? initializeApp(firebaseConfig) : null;
-export const db = app ? getDatabase(app) : null;
+export const app = initializeApp(firebaseConfig);
+export const db = getDatabase(app);

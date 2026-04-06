@@ -85,52 +85,84 @@ export default function App() {
   useEffect(() => {
     if (!db) return;
 
-    // Listen to the ESP32 path
-    const sensorRef = query(ref(db, 'gas_detector'), orderByKey(), limitToLast(1));
+    // Listen to multiple possible ESP32 paths to ensure we catch the data
+    const gasDetectorRef = query(ref(db, 'gas_detector'), limitToLast(10));
+    const sensorsLatestRef = ref(db, 'sensors/latest');
     const controlRef = ref(db, 'sensors/control/active');
     
     setConnected(true);
     
-    const unsubscribe = onValue(sensorRef, (snapshot) => {
-      const val = snapshot.val();
-      setFirebaseError(null); // Clear any previous errors
-      if (val) {
-        // val is an object with pushId keys, get the first (and only) one
+    const handleSensorData = (val: any) => {
+      if (!val) return;
+      
+      let latestData = null;
+      
+      // Check if it's a direct object (keys are methane, temperature, etc.)
+      if (val.methane !== undefined || val.mq4_raw !== undefined || val.temperature !== undefined || val.gas !== undefined) {
+        latestData = val;
+      } else {
+        // It's likely a list of pushes. Get the last one.
         const keys = Object.keys(val);
         if (keys.length > 0) {
-          const latestData = val[keys[0]];
-          const newData: SensorData = {
-            methane: latestData.methane || latestData.mq4_raw || 0,
-            air_quality: latestData.air_quality || latestData.mq135_raw || 0,
-            temperature: latestData.temperature || 0,
-            humidity: latestData.humidity || 0,
-            soil_moisture: latestData.soil_moisture || latestData.soil_raw || 0,
-            timestamp: new Date().toLocaleTimeString(),
-            alert_air: latestData.alert_air || false,
-            alert_gas: latestData.alert_gas || false,
-            alert_soil: latestData.alert_soil || false
-          };
-          
-          updateData(newData);
-          setDeviceStatus(prev => ({ ...prev, lastUpdate: Date.now(), online: true }));
-
-          // If the cloud function added AI analysis, use it
-          if (latestData.ai_analysis) {
-            setAnalysis(latestData.ai_analysis);
-          }
+          const lastKey = keys[keys.length - 1];
+          latestData = val[lastKey];
         }
       }
+
+      if (latestData) {
+        // Handle case where ESP32 pushes a JSON string instead of an object
+        if (typeof latestData === 'string') {
+          try {
+            latestData = JSON.parse(latestData);
+          } catch (e) {
+            console.error("Failed to parse sensor data string:", e);
+            return;
+          }
+        }
+
+        const newData: SensorData = {
+          methane: Number(latestData.methane || latestData.mq4_raw || latestData.gas || 0),
+          air_quality: Number(latestData.air_quality || latestData.mq135_raw || latestData.aqi || 0),
+          temperature: Number(latestData.temperature || latestData.temp || 0),
+          humidity: Number(latestData.humidity || latestData.hum || 0),
+          soil_moisture: Number(latestData.soil_moisture || latestData.soil_raw || latestData.soil || 0),
+          timestamp: new Date().toLocaleTimeString(),
+          alert_air: Boolean(latestData.alert_air || false),
+          alert_gas: Boolean(latestData.alert_gas || false),
+          alert_soil: Boolean(latestData.alert_soil || false)
+        };
+        
+        updateData(newData);
+        setDeviceStatus(prev => ({ ...prev, lastUpdate: Date.now(), online: true }));
+
+        // If the cloud function added AI analysis, use it
+        if (latestData.ai_analysis) {
+          setAnalysis(latestData.ai_analysis);
+        }
+      }
+    };
+
+    const unsubGas = onValue(gasDetectorRef, (snapshot) => {
+      setFirebaseError(null);
+      handleSensorData(snapshot.val());
     }, (error) => {
       if (error.message.includes("permission_denied")) {
-        console.warn("Firebase permission denied. Please update your database rules.");
+        console.warn("Firebase permission denied on gas_detector.");
         setFirebaseError("PERMISSION_DENIED");
       } else {
         console.error("Firebase read error:", error);
         setFirebaseError(error.message);
       }
-      
       setConnected(false);
       setDeviceStatus(prev => ({ ...prev, online: false }));
+    });
+
+    const unsubSensors = onValue(sensorsLatestRef, (snapshot) => {
+      setFirebaseError(null);
+      handleSensorData(snapshot.val());
+    }, (error) => {
+      // Ignore permission denied on sensors/latest if gas_detector works
+      console.warn("Firebase read error on sensors/latest:", error);
     });
 
     const unsubscribeControl = onValue(controlRef, (snapshot) => {
@@ -141,7 +173,8 @@ export default function App() {
     });
 
     return () => {
-      unsubscribe();
+      unsubGas();
+      unsubSensors();
       unsubscribeControl();
     };
   }, []);
@@ -292,6 +325,30 @@ export default function App() {
       return { labels: newLabels, methane: newMethane, air_quality: newAQI };
     });
   };
+
+  if (!db) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center p-4">
+        <div className="max-w-2xl w-full bg-yellow-950/30 border border-yellow-500/50 rounded-2xl p-8 space-y-6">
+          <div className="flex items-center gap-4 text-yellow-500">
+            <Zap className="w-12 h-12" />
+            <h1 className="text-3xl font-bold">Firebase Not Configured</h1>
+          </div>
+          <p className="text-gray-300 text-lg">
+            The application cannot connect to Firebase because the configuration is missing.
+          </p>
+          <div className="bg-black/50 dark:bg-black/50 p-6 rounded-xl border border-black/10 dark:border-white/10 space-y-4">
+            <h2 className="text-xl font-semibold text-[var(--text-primary)]">How to fix this:</h2>
+            <ol className="list-decimal list-inside space-y-3 text-[var(--text-secondary)]">
+              <li>Open the <strong>Settings</strong> menu in AI Studio (gear icon).</li>
+              <li>Add your Firebase configuration variables (e.g., <code>VITE_FIREBASE_API_KEY</code>, <code>VITE_FIREBASE_DATABASE_URL</code>, etc.).</li>
+              <li>Restart the dev server or refresh the page.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (firebaseError === "PERMISSION_DENIED") {
     return (

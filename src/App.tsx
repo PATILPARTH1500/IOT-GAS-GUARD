@@ -16,7 +16,7 @@ import { TrendAnalytics } from './components/TrendAnalytics';
 import { SensorData, AIAnalysis, RiskForecast, Incident, DeviceStatus } from './types';
 import { Activity, Wind, Thermometer, Droplets, Zap, Wifi, WifiOff, Volume2, VolumeX, Sun, Moon, Sprout, Power } from 'lucide-react';
 import { clsx } from 'clsx';
-import { ref, onValue, off, set } from 'firebase/database';
+import { ref, onValue, off, set, query, orderByKey, limitToLast } from 'firebase/database';
 import { db } from './lib/firebase';
 import { analyzeRisk, forecastRisk } from './lib/gemini';
 
@@ -86,7 +86,7 @@ export default function App() {
     if (!db) return;
 
     // Listen to the ESP32 path
-    const sensorRef = ref(db, 'sensors/latest');
+    const sensorRef = query(ref(db, 'gas_detector'), orderByKey(), limitToLast(1));
     const controlRef = ref(db, 'sensors/control/active');
     
     setConnected(true);
@@ -95,20 +95,30 @@ export default function App() {
       const val = snapshot.val();
       setFirebaseError(null); // Clear any previous errors
       if (val) {
-        const newData: SensorData = {
-          methane: val.mq4_raw || 0,
-          air_quality: val.mq135_raw || 0,
-          temperature: val.temperature || 0,
-          humidity: val.humidity || 0,
-          soil_moisture: val.soil_raw || 0,
-          timestamp: new Date().toLocaleTimeString(),
-          alert_air: val.alert_air || false,
-          alert_gas: val.alert_gas || false,
-          alert_soil: val.alert_soil || false
-        };
-        
-        updateData(newData);
-        setDeviceStatus(prev => ({ ...prev, lastUpdate: Date.now(), online: true }));
+        // val is an object with pushId keys, get the first (and only) one
+        const keys = Object.keys(val);
+        if (keys.length > 0) {
+          const latestData = val[keys[0]];
+          const newData: SensorData = {
+            methane: latestData.methane || latestData.mq4_raw || 0,
+            air_quality: latestData.air_quality || latestData.mq135_raw || 0,
+            temperature: latestData.temperature || 0,
+            humidity: latestData.humidity || 0,
+            soil_moisture: latestData.soil_moisture || latestData.soil_raw || 0,
+            timestamp: new Date().toLocaleTimeString(),
+            alert_air: latestData.alert_air || false,
+            alert_gas: latestData.alert_gas || false,
+            alert_soil: latestData.alert_soil || false
+          };
+          
+          updateData(newData);
+          setDeviceStatus(prev => ({ ...prev, lastUpdate: Date.now(), online: true }));
+
+          // If the cloud function added AI analysis, use it
+          if (latestData.ai_analysis) {
+            setAnalysis(latestData.ai_analysis);
+          }
+        }
       }
     }, (error) => {
       if (error.message.includes("permission_denied")) {
@@ -131,8 +141,8 @@ export default function App() {
     });
 
     return () => {
-      off(sensorRef);
-      off(controlRef);
+      unsubscribe();
+      unsubscribeControl();
     };
   }, []);
 

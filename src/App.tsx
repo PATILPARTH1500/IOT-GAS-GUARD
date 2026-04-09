@@ -465,8 +465,8 @@ export default function App() {
           />
           <SensorCard 
             label="Soil Moisture" 
-            value={Math.round(data.soil_moisture)} 
-            unit="raw" 
+            value={data.soil_moisture > 2000 ? "DRY" : "WET"} 
+            unit="" 
             icon={Sprout} 
             status={data.alert_soil ? 'warning' : 'safe'} 
           />

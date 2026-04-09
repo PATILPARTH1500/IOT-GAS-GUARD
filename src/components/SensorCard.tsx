@@ -4,7 +4,7 @@ import { LucideIcon } from 'lucide-react';
 
 interface SensorCardProps {
   label: string;
-  value: number;
+  value: number | string;
   unit: string;
   icon: LucideIcon;
   status: "safe" | "warning" | "danger";
@@ -24,6 +24,9 @@ export function SensorCard({ label, value, unit, icon: Icon, status, trend }: Se
     danger: "text-red-500"
   };
 
+  const displayValue = typeof value === 'number' ? value : value;
+  const progressWidth = typeof value === 'number' ? Math.min(value, 100) : 100;
+
   return (
     <div className={clsx(
       "glass-panel p-6 flex flex-col items-center justify-between transition-all duration-300 hover:scale-105",
@@ -36,9 +39,9 @@ export function SensorCard({ label, value, unit, icon: Icon, status, trend }: Se
       
       <div className="flex items-baseline gap-1">
         <span className={clsx("text-4xl font-bold font-mono tracking-tighter", statusColors[status].split(' ')[0])}>
-          {value}
+          {displayValue}
         </span>
-        <span className="text-secondary text-sm font-mono">{unit}</span>
+        {unit && <span className="text-secondary text-sm font-mono">{unit}</span>}
       </div>
 
       <div className="w-full mt-4 h-1.5 bg-card-inner rounded-full overflow-hidden">
@@ -47,7 +50,7 @@ export function SensorCard({ label, value, unit, icon: Icon, status, trend }: Se
             status === 'safe' ? 'bg-emerald-500' : 
             status === 'warning' ? 'bg-amber-500' : 'bg-red-500'
           )}
-          style={{ width: `${Math.min(value, 100)}%` }} // Simplified percentage for demo
+          style={{ width: `${progressWidth}%` }}
         />
       </div>
     </div>

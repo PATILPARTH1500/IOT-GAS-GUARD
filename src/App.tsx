@@ -441,6 +441,7 @@ export default function App() {
             unit="raw" 
             icon={Zap} 
             status={data.alert_gas ? 'danger' : 'safe'} 
+            max={4095}
           />
           <SensorCard 
             label="Air Quality" 
@@ -448,6 +449,7 @@ export default function App() {
             unit="raw" 
             icon={Wind} 
             status={data.alert_air ? 'danger' : 'safe'} 
+            max={4095}
           />
           <SensorCard 
             label="Temperature" 
@@ -455,6 +457,7 @@ export default function App() {
             unit="°C" 
             icon={Thermometer} 
             status="safe" 
+            max={60}
           />
           <SensorCard 
             label="Humidity" 
@@ -462,6 +465,7 @@ export default function App() {
             unit="%" 
             icon={Droplets} 
             status="safe" 
+            max={100}
           />
           <SensorCard 
             label="Soil Moisture" 
@@ -469,6 +473,8 @@ export default function App() {
             unit="" 
             icon={Sprout} 
             status={data.alert_soil ? 'warning' : 'safe'} 
+            max={4095}
+            gaugeValue={data.soil_moisture}
           />
         </div>
 

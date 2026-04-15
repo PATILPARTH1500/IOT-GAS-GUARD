@@ -56,7 +56,18 @@ export function SensorCard({ label, value, unit, icon: Icon, status, trend, min 
       </div>
       
       <div className="relative w-full flex flex-col justify-center items-center mt-2">
-        <svg viewBox="0 0 100 55" className="w-full max-w-[160px] overflow-visible drop-shadow-lg">
+        <svg viewBox="0 0 100 60" className="w-full max-w-[160px] overflow-visible drop-shadow-xl">
+          <defs>
+            <filter id={`glow-${label.replace(/\s+/g, '-')}`} x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="2" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+            <linearGradient id="hubGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#334155" />
+              <stop offset="100%" stopColor="#0f172a" />
+            </linearGradient>
+          </defs>
+
           {/* Ticks */}
           {[...Array(21)].map((_, i) => {
             const tickAngle = -90 + (i * 9); // 180 degrees / 20 intervals = 9 degrees
@@ -64,17 +75,25 @@ export function SensorCard({ label, value, unit, icon: Icon, status, trend, min 
             return (
               <line
                 key={i}
-                x1="50" y1={isMajor ? "2" : "5"}
-                x2="50" y2={isMajor ? "8" : "8"}
+                x1="50" y1={isMajor ? "6" : "9"}
+                x2="50" y2="11"
                 stroke={isMajor ? "var(--text-primary)" : "var(--text-secondary)"}
-                strokeWidth={isMajor ? "1.5" : "0.75"}
+                strokeWidth={isMajor ? "1.5" : "1"}
                 transform={`rotate(${tickAngle}, 50, 50)`}
-                opacity={isMajor ? "0.8" : "0.4"}
+                opacity={isMajor ? "0.9" : "0.4"}
               />
             );
           })}
 
-          {/* Background Arc */}
+          {/* Background Arc Track (Shadow) */}
+          <path
+            d="M 14 50 A 36 36 0 0 1 86 50"
+            fill="none"
+            stroke="rgba(0,0,0,0.3)"
+            strokeWidth="8"
+            strokeLinecap="round"
+          />
+          {/* Background Arc Track (Base) */}
           <path
             d="M 14 50 A 36 36 0 0 1 86 50"
             fill="none"
@@ -93,23 +112,28 @@ export function SensorCard({ label, value, unit, icon: Icon, status, trend, min 
             strokeDasharray={circumference}
             strokeDashoffset={strokeDashoffset}
             className="transition-all duration-1000 ease-out"
+            filter={`url(#glow-${label.replace(/\s+/g, '-')})`}
           />
 
           {/* Needle */}
           <g className="transition-transform duration-1000 ease-out" style={{ transform: `rotate(${needleAngle}deg)`, transformOrigin: '50px 50px' }}>
-            <polygon points="48.5,50 51.5,50 50,10" fill={strokeColors[status]} />
-            <circle cx="50" cy="50" r="4" fill={strokeColors[status]} />
-            <circle cx="50" cy="50" r="1.5" fill="#0f172a" />
+            {/* Shadow */}
+            <polygon points="48,50 52,50 50,12" fill="rgba(0,0,0,0.3)" transform="translate(1, 2)" />
+            {/* Needle Body */}
+            <polygon points="48.5,50 51.5,50 50,12" fill={strokeColors[status]} />
+            {/* Hub */}
+            <circle cx="50" cy="50" r="6" fill="url(#hubGradient)" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
+            <circle cx="50" cy="50" r="2" fill={strokeColors[status]} />
           </g>
         </svg>
         
-        <div className="mt-3 flex flex-col items-center">
-          <div className="flex items-baseline gap-1">
-            <span className={clsx("text-3xl font-bold font-mono tracking-tighter", statusColors[status].split(' ')[0])}>
+        <div className="mt-4 flex flex-col items-center">
+          <div className="bg-black/20 dark:bg-black/40 px-4 py-1.5 rounded-lg border border-black/10 dark:border-white/5 shadow-inner flex items-baseline gap-1 min-w-[80px] justify-center">
+            <span className={clsx("text-2xl font-bold font-mono tracking-tighter", statusColors[status].split(' ')[0])}>
               {displayValue}
             </span>
           </div>
-          {unit && <span className="text-secondary text-[10px] font-mono uppercase tracking-widest mt-1">{unit}</span>}
+          {unit && <span className="text-secondary text-[10px] font-mono uppercase tracking-widest mt-2">{unit}</span>}
         </div>
       </div>
     </div>

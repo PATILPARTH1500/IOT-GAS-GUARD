@@ -120,9 +120,13 @@ export default function App() {
           }
         }
 
+        const rawAqi = Number(latestData.air_quality || latestData.mq135_raw || latestData.aqi || 0);
+        // Map raw ADC value (0-4095) to AQI range (1-1000)
+        const mappedAqi = Math.max(1, Math.min(1000, Math.round((rawAqi / 4095) * 1000)));
+
         const newData: SensorData = {
           methane: Number(latestData.methane || latestData.mq4_raw || latestData.gas || 0),
-          air_quality: Number(latestData.air_quality || latestData.mq135_raw || latestData.aqi || 0),
+          air_quality: mappedAqi,
           temperature: Number(latestData.temperature || latestData.temp || 0),
           humidity: Number(latestData.humidity || latestData.hum || 0),
           soil_moisture: Number(latestData.soil_moisture || latestData.soil_raw || latestData.soil || 0),
@@ -444,12 +448,12 @@ export default function App() {
             max={4095}
           />
           <SensorCard 
-            label="Air Quality" 
+            label="AQI" 
             value={Math.round(data.air_quality)} 
-            unit="raw" 
+            unit="" 
             icon={Wind} 
             status={data.alert_air ? 'danger' : 'safe'} 
-            max={4095}
+            max={1000}
           />
           <SensorCard 
             label="Temperature" 

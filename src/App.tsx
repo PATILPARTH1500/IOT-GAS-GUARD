@@ -9,6 +9,7 @@ import { HistoryChart } from './components/HistoryChart';
 import { AIInsight } from './components/AIInsight';
 import { RiskForecastCard } from './components/RiskForecastCard';
 import { IncidentTimeline } from './components/IncidentTimeline';
+import { HazardMap } from './components/HazardMap';
 import { SensorHealth } from './components/SensorHealth';
 import { AIChat } from './components/AIChat';
 import { ExportControls } from './components/ExportControls';
@@ -419,15 +420,17 @@ export default function App() {
             <button 
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
               className="p-2 rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+              aria-label={theme === 'dark' ? "Switch to light theme" : "Switch to dark theme"}
             >
-              {theme === 'dark' ? <Sun className="w-5 h-5 text-yellow-400" /> : <Moon className="w-5 h-5 text-slate-700" />}
+              {theme === 'dark' ? <Sun className="w-5 h-5 text-yellow-400" aria-hidden="true" /> : <Moon className="w-5 h-5 text-slate-700" aria-hidden="true" />}
             </button>
 
             <button 
               onClick={() => setSoundEnabled(!soundEnabled)}
               className="p-2 rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+              aria-label={soundEnabled ? "Disable sound alerts" : "Enable sound alerts"}
             >
-              {soundEnabled ? <Volume2 className="w-5 h-5 text-blue-500" /> : <VolumeX className="w-5 h-5 text-secondary" />}
+              {soundEnabled ? <Volume2 className="w-5 h-5 text-blue-500" aria-hidden="true" /> : <VolumeX className="w-5 h-5 text-secondary" aria-hidden="true" />}
             </button>
             
             <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card-inner border border-black/10 dark:border-white/10">
@@ -510,11 +513,14 @@ export default function App() {
         </div>
 
         {/* Bottom Row: Timeline, Map, Health */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-96">
-          <div className="lg:col-span-2">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[400px]">
+          <div className="lg:col-span-1 h-full">
+            <HazardMap data={data} deviceStatus={deviceStatus} />
+          </div>
+          <div className="lg:col-span-1 h-full">
             <IncidentTimeline incidents={incidents} />
           </div>
-          <div className="flex flex-col gap-6">
+          <div className="lg:col-span-1 flex flex-col gap-6 h-full">
             <SensorHealth status={deviceStatus} />
             <ExportControls 
               dataHistory={history} 

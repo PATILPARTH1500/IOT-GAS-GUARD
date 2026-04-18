@@ -133,12 +133,12 @@ export function AIInsight({ riskLevel, analysis, recommendation, loading, onAnal
         <button 
           onClick={onAnalyze}
           disabled={loading}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 rounded-full text-xs font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex items-center gap-2 px-5 py-2.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 rounded-full text-xs font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
           GET AI RISK ANALYSIS
         </button>
-        <span className="text-[10px] text-secondary font-mono opacity-60 flex items-center gap-1">
+        <span className="text-xs text-secondary font-mono opacity-80 flex items-center gap-1">
           Powered by Gemini 2.5 Flash
         </span>
       </div>

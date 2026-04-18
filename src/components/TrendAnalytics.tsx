@@ -42,7 +42,7 @@ export function TrendAnalytics({ history, theme }: TrendAnalyticsProps) {
       <h3 className="text-secondary text-xs uppercase tracking-widest font-mono mb-6">Environment Trend Analytics</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="h-48">
-          <h4 className="text-[10px] text-secondary mb-2 font-mono">AIR QUALITY (WEEKLY AVG)</h4>
+          <h4 className="text-xs text-secondary mb-2 font-mono">AIR QUALITY (WEEKLY AVG)</h4>
           <Bar data={barData} options={options} />
         </div>
         <div className="h-48 flex items-center justify-center border border-[var(--glass-border)] rounded bg-card-inner">

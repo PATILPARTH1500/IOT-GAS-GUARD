@@ -133,7 +133,7 @@ export function SensorCard({ label, value, unit, icon: Icon, status, trend, min 
               {displayValue}
             </span>
           </div>
-          {unit && <span className="text-secondary text-[10px] font-mono uppercase tracking-widest mt-2">{unit}</span>}
+          {unit && <span className="text-secondary text-xs font-mono uppercase tracking-widest mt-2">{unit}</span>}
         </div>
       </div>
     </div>
